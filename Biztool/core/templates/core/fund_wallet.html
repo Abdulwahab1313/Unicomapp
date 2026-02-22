@@ -1,0 +1,21 @@
+
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Fund Wallet</title>
+</head>
+<body>
+
+<h2>Fund Wallet</h2>
+
+<form method="POST">
+    {% csrf_token %}
+    <label>Enter Amount:</label>
+    <input type="number" name="amount" required>
+    <button type="submit">Add Money</button>
+</form>
+
+<a href="{% url 'dashboard' %}">Back to Dashboard</a>
+
+</body>
+</html>

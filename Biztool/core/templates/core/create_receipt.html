@@ -1,0 +1,14 @@
+<h2>Create Receipt</h2>
+<form method="POST">
+    {% csrf_token %}
+    {{ form.as_p }}
+    {{ formset.management_form }}
+    <table border="1" cellpadding="5">
+        {% for form in formset %}
+        <div> style="margine-bottom: 20px;">
+            {{ form.as_p }}
+        </div>
+        {% endfor %}
+    </table>
+    <button type="submit">Print Receipt (20₦)</button>
+</form>

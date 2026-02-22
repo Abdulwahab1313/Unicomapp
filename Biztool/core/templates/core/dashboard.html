@@ -1,0 +1,24 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Dashboard</title>
+</head>
+<body>
+
+<h2>Dashboard</h2>
+
+<p><strong>Wallet Balance:</strong> ₦{{ wallet.balance }}</p>
+<p><a href="{% url 'fund_wallet' %}">Fund Wallet</a></p>
+
+<a href="{% url 'create_receipt' %}">Create Receipt</a>
+<br><br>
+<a href="{% url 'create_profile' %}">Edit Profile</a>
+
+<p>
+    <a href="{% url 'create_profile' %}">Edit Brand Info</a>
+</p>
+<br><a href="{% url 'logout' %}">Logout</a>
+
+</body>
+</html>
+
