@@ -1,6 +1,10 @@
 from django.urls import path
 from . import views
 
+
+from django.urls import path
+from .views import initialize_payment
+
 urlpatterns = [
     path("", views.user_login, name="home"),
     path("dashboard/", views.dashboard, name="dashboard"),
@@ -10,6 +14,6 @@ urlpatterns = [
     path("logout/", views.user_logout, name="logout"),
     path("register/", views.register, name="register"),
     path("fund-wallet/", views.fund_wallet, name="fund_wallet"),
-
+    path("pay/", initialize_payment, name="pay"),
 ]
 

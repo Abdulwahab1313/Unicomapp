@@ -175,3 +175,45 @@ def fund_wallet(request):
             return redirect("dashboard")
 
     return render(request, "core/fund_wallet.html")
+
+
+import requests
+from django.conf import settings
+from django.shortcuts import redirect
+from django.http import JsonResponse
+
+
+def initialize_payment(request):
+    url = "https://api.paystack.co/transaction/initialize"
+
+    headers = {
+        "Authorization": f"Bearer {settings.PAYSTACK_SECRET_KEY}",
+        "Content-Type": "application/json",
+    }
+
+    data = {
+        "email": request.user.email,
+        "amount": 2000,  # 20 naira = 2000 kobo
+        "callback_url": "http://127.0.0.1:8000/payment/verify/"
+    }
+
+    response = requests.post(url, json=data, headers=headers)
+    res_data = response.json()
+
+    if res_data["status"]:
+        return redirect(res_data["data"]["authorization_url"])
+    else:
+        return JsonResponse(res_data)
+
+
+# URL
+from django.urls import path
+from .views import initialize_payment
+
+urlpatterns = [
+    path("pay/", initialize_payment, name="pay"),
+]
+
+
+
+
