@@ -1,9 +1,10 @@
 from django.urls import path
 from . import views
 
-
 from django.urls import path
 from .views import initialize_payment
+from .views import initialize_payment, verify_payment, fund_wallet
+
 
 urlpatterns = [
     path("", views.user_login, name="home"),
@@ -15,5 +16,12 @@ urlpatterns = [
     path("register/", views.register, name="register"),
     path("fund-wallet/", views.fund_wallet, name="fund_wallet"),
     path("pay/", initialize_payment, name="pay"),
+    path("fund-wallet/", fund_wallet, name="fund_wallet"),
+    path("pay/", initialize_payment, name="pay"),
+    path("payment/verify/", verify_payment, name="verify_payment"),
 ]
+
+
+
+
 

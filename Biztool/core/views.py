@@ -161,20 +161,11 @@ def register(request):
 def fund_wallet(request):
     if request.method == "POST":
         amount = request.POST.get("amount")
-
         if amount:
-            wallet = request.user.wallet
-            wallet.balance += Decimal(amount)
-            wallet.save()
-
-            Transaction.objects.create(
-                user=request.user,
-                amount=amount
-            )
-
-            return redirect("dashboard")
-
+            request.session['fund_amount'] = amount  # store amount in session
+            return redirect("pay")  # redirect to initialize_payment
     return render(request, "core/fund_wallet.html")
+
 
 
 import requests
@@ -184,23 +175,28 @@ from django.http import JsonResponse
 
 
 def initialize_payment(request):
-    url = "https://api.paystack.co/transaction/initialize"
+    import requests
+    from django.conf import settings
+    from django.shortcuts import redirect
+    from django.http import JsonResponse
 
+    amount = int(Decimal(request.session.get('fund_amount', 0)) * 100)  # convert Naira to Kobo
+
+    url = "https://api.paystack.co/transaction/initialize"
     headers = {
         "Authorization": f"Bearer {settings.PAYSTACK_SECRET_KEY}",
         "Content-Type": "application/json",
     }
-
     data = {
         "email": request.user.email,
-        "amount": 2000,  # 20 naira = 2000 kobo
-        "callback_url": "http://127.0.0.1:8000/payment/verify/"
+        "amount": amount,
+        "callback_url": "https://unicom-1.onrender.com/payment/verify/"
     }
 
     response = requests.post(url, json=data, headers=headers)
     res_data = response.json()
 
-    if res_data["status"]:
+    if res_data.get("status"):
         return redirect(res_data["data"]["authorization_url"])
     else:
         return JsonResponse(res_data)
@@ -214,6 +210,30 @@ urlpatterns = [
     path("pay/", initialize_payment, name="pay"),
 ]
 
+
+def verify_payment(request):
+    import requests
+    from django.conf import settings
+
+    ref = request.GET.get('reference')
+    url = f"https://api.paystack.co/transaction/verify/{ref}"
+    headers = {
+        "Authorization": f"Bearer {settings.PAYSTACK_SECRET_KEY}"
+    }
+    response = requests.get(url, headers=headers)
+    res_data = response.json()
+
+    if res_data.get("status") and res_data["data"]["status"] == "success":
+        wallet = request.user.wallet
+        amount = Decimal(res_data["data"]["amount"]) / 100
+        wallet.balance += amount
+        wallet.save()
+
+        Transaction.objects.create(user=request.user, amount=amount)
+        return redirect("dashboard")
+    else:
+        messages.error(request, "Payment failed or was cancelled.")
+        return redirect("fund_wallet")
 
 
 

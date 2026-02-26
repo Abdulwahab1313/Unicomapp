@@ -8,11 +8,11 @@
 
 <h2>Fund Wallet</h2>
 
-<form method="POST">
+<form method="post">
     {% csrf_token %}
-    <label>Enter Amount:</label>
+    <label>Enter amount to fund</label>
     <input type="number" name="amount" required>
-    <button type="submit">Add Money</button>
+    <button type="submit">Fund Wallet</button>
 </form>
 
 <a href="{% url 'dashboard' %}">Back to Dashboard</a>
