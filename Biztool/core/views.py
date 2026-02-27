@@ -200,6 +200,7 @@ def initialize_payment(request):
         return redirect(res_data["data"]["authorization_url"])
     else:
         return JsonResponse(res_data)
+    print("SECRETE KEY:", SETTINGS.PAYSTACK_SECRET_KEY)
 
 
 # URL
