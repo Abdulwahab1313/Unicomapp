@@ -193,6 +193,8 @@ def initialize_payment(request):
         "callback_url": "https://unicom-1.onrender.com/payment/verify/"
     }
 
+    print("SECRETE KEY:", settings.PAYSTACK_SECRET_KEY)
+
     response = requests.post(url, json=data, headers=headers)
     res_data = response.json()
 
@@ -200,7 +202,6 @@ def initialize_payment(request):
         return redirect(res_data["data"]["authorization_url"])
     else:
         return JsonResponse(res_data)
-    print("SECRETE KEY:", SETTINGS.PAYSTACK_SECRET_KEY)
 
 
 # URL
