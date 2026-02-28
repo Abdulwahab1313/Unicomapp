@@ -175,27 +175,34 @@ from django.conf import settings
 from django.shortcuts import redirect
 from django.http import JsonResponse
 
+from django.urls import reverse
+from decimal import Decimal
+import requests
+from django.conf import settings
+from django.shortcuts import redirect
+from django.http import JsonResponse
+from django.contrib.auth.decorators import login_required
 
+
+@login_required
 def initialize_payment(request):
-    import requests
-    from django.conf import settings
-    from django.shortcuts import redirect
-    from django.http import JsonResponse
-
-    amount = int(Decimal(request.session.get('fund_amount', 0)) * 100)  # convert Naira to Kobo
+    # Get amount from session and convert to Kobo
+    amount = int(Decimal(request.session.get('fund_amount', 0)) * 100)
 
     url = "https://api.paystack.co/transaction/initialize"
     headers = {
         "Authorization": f"Bearer {settings.PAYSTACK_SECRET_KEY}",
         "Content-Type": "application/json",
     }
+
+    # Dynamically generate callback URL
+    callback_url = request.build_absolute_uri(reverse("verify_payment"))
+
     data = {
         "email": request.user.email,
         "amount": amount,
-        "callback_url": "https://unicom-1.onrender.com/payment/verify/"
+        "callback_url": callback_url,
     }
-
-    print("SECRETE KEY:", settings.PAYSTACK_SECRET_KEY)
 
     response = requests.post(url, json=data, headers=headers)
     res_data = response.json()
@@ -206,13 +213,6 @@ def initialize_payment(request):
         return JsonResponse(res_data)
 
 
-# URL
-from django.urls import path
-from .views import initialize_payment
-
-urlpatterns = [
-    path("pay/", initialize_payment, name="pay"),
-]
 
 
 def verify_payment(request):
