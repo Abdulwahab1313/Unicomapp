@@ -144,14 +144,16 @@ def user_logout(request):
 
 
 
+from .forms import CustomUserCreationForm  # import the new form
+
 def register(request):
     if request.method == "POST":
-        form = UserCreationForm(request.POST)
+        form = CustomUserCreationForm(request.POST)
         if form.is_valid():
-            user = form.save()
+            form.save()
             return redirect("login")
     else:
-        form = UserCreationForm()
+        form = CustomUserCreationForm()
     return render(request, "core/register.html", {"form": form})
 
 
