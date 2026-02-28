@@ -90,6 +90,6 @@ STATICFILES_STORAGE = 'whitenoise.storage.CompressedManifestStaticFilesStorage'
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
 
-PAYSTACK_PUBLIC_KEY = os.environ.get("pk_test_be0bcfb54ed777b80e3db0a28cb3c5374abdafed")
+PAYSTACK_PUBLIC_KEY = os.environ.get("PAYSTACK_PUBLIC_KEY")
 
-PAYSTACK_SECRET_KEY = os.environ.get("sk_test_604ab43907e578ad6157b483fedfc63466967051")
+PAYSTACK_SECRET_KEY = os.environ.get("PAYSTACK_SECRET_KEY")
